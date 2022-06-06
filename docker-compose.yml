@@ -12,13 +12,13 @@ services:
     environment:
       VIRTUAL_HOST: localhost
       VIRTUAL_PORT: 8080
-    image:
-       tomcat:8
+    #image:
+    #   tomcat:8
     depends_on:
        - db
     volumes:
        - ./target/cis5530w3h1-1.0-SNAPSHOT.war:/usr/local/tomcat/webapps/cis5530w3h1.war
-    build: './'
+    build: ./
     ports:
      - "8080:8080"
     #command: >
