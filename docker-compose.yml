@@ -1,0 +1,35 @@
+version: '2'
+services:
+  nginx:
+    image: jwilder/nginx-proxy:latest
+    ports:
+      - "80:80"
+#    volumes:
+#      - "/var/run/docker.sock:/tmp/docker.sock:ro"
+    links:
+      - tomcat
+  tomcat:
+    image:
+        tomcat9:latest
+    depends_on:
+     - db
+    build: './'
+    ports:
+     - "8080:8080"
+    #command: >
+    #  bash -c "rm -f tmp/pids/server.pid &&
+    #           bundle exec rake db:migrate &&
+    #           foreman start"
+    #env_file:
+    # - web.env
+  db:
+    image: mariadb:10.7
+    ports:
+        - 3306:3306
+    volumes:
+      - ./mounts/db_data:/var/lib/mysql
+    environment:
+      MYSQL_USER: admin
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_PASSWORD: admin
+      MYSQL_DATABASE: page_monitor
