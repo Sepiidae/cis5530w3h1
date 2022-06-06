@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 services:
   nginx:
     image: jwilder/nginx-proxy:latest
@@ -9,24 +9,16 @@ services:
     links:
       - tomcat
   tomcat:
+    deploy:
+      replicas: 1
     environment:
       VIRTUAL_HOST: localhost
       VIRTUAL_PORT: 8080
-    #image:
-    #   tomcat:8
     depends_on:
        - db
     volumes:
        - ./target/cis5530w3h1-1.0-SNAPSHOT.war:/usr/local/tomcat/webapps/cis5530w3h1.war
     build: ./
-    ports:
-     - "8080:8080"
-    #command: >
-    #  bash -c "rm -f tmp/pids/server.pid &&
-    #           bundle exec rake db:migrate &&
-    #           foreman start"
-    #env_file:
-    # - web.env
   db:
     image: mariadb:10.7
     ports:
