@@ -55,7 +55,7 @@ public class IndexServlet extends HttpServlet {
         }
         try {
             Class.forName("org.mariadb.jdbc.Driver");
-
+            DriverManager.registerDriver(new org.mariadb.jdbc.Driver());
             // Really bad example of a database connection
             // NEVER put the URI, USERNAME and PASSWORD IN source
             Connection connection = DriverManager.getConnection(
@@ -66,14 +66,15 @@ public class IndexServlet extends HttpServlet {
            
 
             try (PreparedStatement statement = connection.prepareStatement(
-                    "insert into hits(ip, url) values( ?, ?)")
+                    "insert into hits(ip, url, server) values( ?, ?, ?)")
                     
                     
                     ) {
                 
                 statement.setString(1, request.getRemoteAddr());
                 statement.setString(2, request.getRequestURI());
-                ResultSet resultSet = statement.executeQuery();
+                statement.setString(3, request.getLocalName());
+                ResultSet resultSet = statement.executeQuery();;
                 
                 
             } catch (SQLException ex) {

@@ -39,7 +39,16 @@ public class DatabaseServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
 
-            Class.forName("org.mariadb.jdbc.Driver");
+            try {
+
+                Class.forName("org.mariadb.jdbc.Driver").newInstance();
+                DriverManager.registerDriver(new org.mariadb.jdbc.Driver());
+
+            } catch (InstantiationException ex) {
+                Logger.getLogger(DatabaseServlet.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IllegalAccessException ex) {
+                Logger.getLogger(DatabaseServlet.class.getName()).log(Level.SEVERE, null, ex);
+            }
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
@@ -49,7 +58,7 @@ public class DatabaseServlet extends HttpServlet {
             out.println("<body>");
             out.println("<h1>Servlet DatabaseServlet at " + request.getContextPath() + "</h1>");
             out.println("<table>");
-            out.println("<tr><th>ID</th><th>IP</th><th>URL</th></tr>");
+            out.println("<tr><th>ID</th><th>IP</th><th>URL</th><th>Server</th></tr>");
             // Really bad example of a database connection
             // NEVER put the URI, USERNAME and PASSWORD IN source
             Connection connection = DriverManager.getConnection(
@@ -63,6 +72,7 @@ public class DatabaseServlet extends HttpServlet {
                     + "  `ip` varchar(100) DEFAULT NULL,\n"
                     + "  `hit_date` timestamp NULL DEFAULT current_timestamp(),\n"
                     + "  `url` varchar(500) DEFAULT NULL,\n"
+                    + "  `server` varchar(500) DEFAULT NULL,\n"
                     + "  UNIQUE KEY `hits_id_IDX` (`id`) USING BTREE\n"
                     + ") ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4"
             )) {
@@ -77,8 +87,8 @@ public class DatabaseServlet extends HttpServlet {
                     int id = resultSet.getInt("id"); // by column name
                     String ip = resultSet.getString("ip"); // by column name
                     String url = resultSet.getString("url"); // by column name
+                    String server = resultSet.getString("server"); // by column name
 
-                    
                     out.println("<tr>");
                     out.println("<td>");
                     out.println(id);
@@ -88,9 +98,11 @@ public class DatabaseServlet extends HttpServlet {
                     out.println("</td>");
                     out.println("<td>");
                     out.println(url);
-                    out.println("</td>");                    
+                    out.println("</td>");
+                    out.println("<td>");
+                    out.println(server);
+                    out.println("</td>");
                     out.println("</tr>");
-                    
 
                 }
             }
