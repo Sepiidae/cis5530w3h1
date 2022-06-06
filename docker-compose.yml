@@ -4,15 +4,20 @@ services:
     image: jwilder/nginx-proxy:latest
     ports:
       - "80:80"
-#    volumes:
-#      - "/var/run/docker.sock:/tmp/docker.sock:ro"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
     links:
       - tomcat
   tomcat:
+    environment:
+      VIRTUAL_HOST: localhost
+      VIRTUAL_PORT: 8080
     image:
-        tomcat9:latest
+       tomcat:8
     depends_on:
-     - db
+       - db
+    volumes:
+       - ./target/cis5530w3h1-1.0-SNAPSHOT.war:/usr/local/tomcat/webapps/cis5530w3h1.war
     build: './'
     ports:
      - "8080:8080"
@@ -29,7 +34,9 @@ services:
     volumes:
       - ./mounts/db_data:/var/lib/mysql
     environment:
-      MYSQL_USER: admin
+      MYSQL_USER: mysql
       MYSQL_ROOT_PASSWORD: admin
       MYSQL_PASSWORD: admin
       MYSQL_DATABASE: page_monitor
+      
+    

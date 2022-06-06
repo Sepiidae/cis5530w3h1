@@ -23,9 +23,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author rhianresnick
  */
-public class IndexServlet extends HttpServlet {
-
-    private int pageViews = 0;
+public class DatabaseServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -40,22 +38,18 @@ public class IndexServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
+
+            Class.forName("org.mariadb.jdbc.Driver");
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet IndexServlet</title>");
+            out.println("<title>Servlet DatabaseServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet IndexServlet at " + request.getContextPath() + "</h1>");
-            out.println("<h1>Local Name " + request.getLocalName() + "</h1>");
-            out.println("<h1>Local Page Views: " + pageViews++ + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-        try {
-            Class.forName("org.mariadb.jdbc.Driver");
-
+            out.println("<h1>Servlet DatabaseServlet at " + request.getContextPath() + "</h1>");
+            out.println("<table>");
+            out.println("<tr><th>ID</th><th>IP</th><th>URL</th></tr>");
             // Really bad example of a database connection
             // NEVER put the URI, USERNAME and PASSWORD IN source
             Connection connection = DriverManager.getConnection(
@@ -63,23 +57,47 @@ public class IndexServlet extends HttpServlet {
                     "root", "admin"
             );
 
-           
-
             try (PreparedStatement statement = connection.prepareStatement(
-                    "insert into hits(ip, url) values( ?, ?)")
-                    
-                    
-                    ) {
-                
-                statement.setString(1, request.getRemoteAddr());
-                statement.setString(2, request.getRequestURI());
-                ResultSet resultSet = statement.executeQuery();
-                
-                
-            } catch (SQLException ex) {
-                Logger.getLogger(IndexServlet.class.getName()).log(Level.SEVERE, null, ex);
+                    "CREATE TABLE IF NOT EXISTS `hits` (\n"
+                    + "  `id` int(11) AUTO_INCREMENT,\n"
+                    + "  `ip` varchar(100) DEFAULT NULL,\n"
+                    + "  `hit_date` timestamp NULL DEFAULT current_timestamp(),\n"
+                    + "  `url` varchar(500) DEFAULT NULL,\n"
+                    + "  UNIQUE KEY `hits_id_IDX` (`id`) USING BTREE\n"
+                    + ") ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4"
+            )) {
+                statement.executeQuery();
+
             }
 
+            try (PreparedStatement statement = connection.prepareStatement(
+                    "SELECT * from hits ")) {
+                ResultSet resultSet = statement.executeQuery();
+                while (resultSet.next()) {
+                    int id = resultSet.getInt("id"); // by column name
+                    String ip = resultSet.getString("ip"); // by column name
+                    String url = resultSet.getString("url"); // by column name
+
+                    
+                    out.println("<tr>");
+                    out.println("<td>");
+                    out.println(id);
+                    out.println("</td>");
+                    out.println("<td>");
+                    out.println(ip);
+                    out.println("</td>");
+                    out.println("<td>");
+                    out.println(url);
+                    out.println("</td>");                    
+                    out.println("</tr>");
+                    
+
+                }
+            }
+
+            out.println("</table>");
+            out.println("</body>");
+            out.println("</html>");
             connection.close();
 
         } catch (SQLException ex) {
@@ -87,10 +105,9 @@ public class IndexServlet extends HttpServlet {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(DatabaseServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
 
-// <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *

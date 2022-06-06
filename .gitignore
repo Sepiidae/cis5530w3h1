@@ -1,1 +1,13 @@
 /target/
+/mounts/db_data/ddl_recovery.log
+/mounts/db_data/mysql/
+/mounts/db_data/sys/
+/mounts/db_data/aria_log.00000001
+/mounts/db_data/page_monitor/
+/mounts/db_data/ibtmp1
+/mounts/db_data/performance_schema/
+/mounts/db_data/multi-master.info
+/mounts/db_data/ib_buffer_pool
+/mounts/db_data/aria_log_control
+/mounts/db_data/ib_logfile0
+/mounts/db_data/ibdata1

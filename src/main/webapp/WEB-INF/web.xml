@@ -4,11 +4,18 @@
         <servlet-name>IndexServlet</servlet-name>
         <servlet-class>edu.fit.cis5530.w3h1.cis5530w3h1.IndexServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>DatabaseServlet</servlet-name>
+        <servlet-class>edu.fit.cis5530.w3h1.cis5530w3h1.DatabaseServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>IndexServlet</servlet-name>
-        <url-pattern>/</url-pattern>
+        <url-pattern>/indexServlet</url-pattern>
     </servlet-mapping>
-    
+    <servlet-mapping>
+        <servlet-name>DatabaseServlet</servlet-name>
+        <url-pattern>/databaseServlet</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>
             30
