@@ -16,8 +16,8 @@ services:
       VIRTUAL_PORT: 8080
     depends_on:
        - db
-    volumes:
-       - ./target/cis5530w3h1-1.0-SNAPSHOT.war:/usr/local/tomcat/webapps/cis5530w3h1.war
+    #volumes:
+    #   - ./target/cis5530w3h1-1.0-SNAPSHOT.war:/usr/local/tomcat/webapps/cis5530w3h1.war
     build: ./
   db:
     image: mariadb:10.7
